@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34701.34
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelegramChat.Server", "TelegramChat.Server\TelegramChat.Server.csproj", "{07E4B2F3-118D-4F52-AD0D-E8E4A9697FC6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelegramChat.Client", "TelegramChat.Client\TelegramChat.Client.csproj", "{C01B609B-16F8-46A5-B9B8-50AE6DA82E2F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelegramInteraction", "TelegramInteraction\TelegramInteraction.csproj", "{A7F0FE07-A13F-40F5-98CB-3ECCEC5ACA01}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{07E4B2F3-118D-4F52-AD0D-E8E4A9697FC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07E4B2F3-118D-4F52-AD0D-E8E4A9697FC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07E4B2F3-118D-4F52-AD0D-E8E4A9697FC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07E4B2F3-118D-4F52-AD0D-E8E4A9697FC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C01B609B-16F8-46A5-B9B8-50AE6DA82E2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C01B609B-16F8-46A5-B9B8-50AE6DA82E2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C01B609B-16F8-46A5-B9B8-50AE6DA82E2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C01B609B-16F8-46A5-B9B8-50AE6DA82E2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7F0FE07-A13F-40F5-98CB-3ECCEC5ACA01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7F0FE07-A13F-40F5-98CB-3ECCEC5ACA01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7F0FE07-A13F-40F5-98CB-3ECCEC5ACA01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7F0FE07-A13F-40F5-98CB-3ECCEC5ACA01}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4953DE4B-927F-4961-B4E5-18706F886714}
+	EndGlobalSection
+EndGlobal
