@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using TelegramChat.Domain;
 using TelegramInteraction;
 
 namespace TelegramChat.TelegramInteraction;
@@ -12,10 +14,12 @@ public class BotService : IBotService
 {
     private readonly TelegramBotClient _botClient;
     private readonly Dictionary<long, long> _conversations = new ();
+    private readonly IServiceProvider _serviceProvider; // Провайдер сервисов для внедрения зависимостей
 
-    public BotService(IConfiguration configuration)
+    public BotService(IConfiguration configuration, IServiceProvider serviceProvider)
     {
         _botClient = new TelegramBotClient(configuration["TelegramToken"]!);
+        _serviceProvider = serviceProvider;
 
         ReceiverOptions receiverOptions = new()
         {
@@ -75,19 +79,30 @@ public class BotService : IBotService
 
         if (_conversations.ContainsKey(chatId))
         {
-            if (_conversations[chatId] == 0 && long.TryParse(messageText, out var otherChatId))
+            var otherChatId = _conversations[chatId];
+
+            if (_conversations[chatId] == 0 && long.TryParse(messageText, out otherChatId))
             {
                 _conversations[chatId] = otherChatId;
             }
 
-            await OnMessageReceived(this, new ChatMessage { ChatId = _conversations[chatId], Text = messageText });
+            await SaveMessage(messageText, chatId, otherChatId);
+
+            await OnMessageReceived(this, new ChatMessage { ChatId = otherChatId, Text = messageText });
             return;
         }
 
         _conversations.Add(chatId, 0);
         await _botClient.SendTextMessageAsync(
             chatId: chatId,
-            text: $"Ваш id чата: {chatId}",
+            text: $"Ваш id чата: {chatId} \n Введите ID чата собеседника",
             cancellationToken: token);
+    }
+
+    private async Task SaveMessage(string messageText, long chatId, long otherChatId)
+    {
+        var scope = _serviceProvider.CreateAsyncScope();
+        var repository = scope.ServiceProvider.GetRequiredService<IMessageHistoryRepository>();
+        await repository.Add(chatId, otherChatId, messageText);
     }
 }

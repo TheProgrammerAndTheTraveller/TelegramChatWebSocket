@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\encryption\Encryption.csproj" />
+    <ProjectReference Include="..\TelegramChat.Client\TelegramChat.Client.csproj" />
+    <ProjectReference Include="..\TelegramChat.Data\TelegramChat.Data.csproj" />
+    <ProjectReference Include="..\TelegramChat.Domain\TelegramChat.Domain.csproj" />
     <ProjectReference Include="..\TelegramInteraction\TelegramInteraction.csproj" />
   </ItemGroup>
 
