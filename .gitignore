@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/TelegramChat.Client/appsettings.local.json
+/TelegramChat.Server/appsettings.local.json
