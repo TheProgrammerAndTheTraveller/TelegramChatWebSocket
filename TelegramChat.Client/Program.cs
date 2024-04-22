@@ -10,13 +10,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("appsettings.local.json", optional: true, reloadOnChange: true);
 builder.Services.AddSingleton<IBotService, BotService>();
 builder.Services.AddHostedService<ChatHostedService>();
-builder.Services.AddScoped<IMessageHistoryRepository, MessageHistoryRepository>();
+builder.Services.AddSingleton<IMessageHistoryRepository, MessageHistoryRepository>();
 builder.Services.AddSingleton<Encryptor>();
 builder.Services.AddSingleton<Decryptor>();
 
 
 var connectionString = builder.Configuration.GetConnectionString("TelegramChatHistory");
-builder.Services.AddDbContext<TelegramChatDbContext>(options =>
+builder.Services.AddDbContextFactory<TelegramChatDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 var app = builder.Build();

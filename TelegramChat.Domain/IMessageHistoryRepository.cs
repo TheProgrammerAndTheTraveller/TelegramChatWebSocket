@@ -2,6 +2,6 @@
 {
     public interface IMessageHistoryRepository
     {
-        Task Add(long id1, long id2, string text);
+        Task Add(long id1, long id2, byte[] text);
     }
 }

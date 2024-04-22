@@ -14,12 +14,10 @@ public class BotService : IBotService
 {
     private readonly TelegramBotClient _botClient;
     private readonly Dictionary<long, long> _conversations = new ();
-    private readonly IServiceProvider _serviceProvider; // Провайдер сервисов для внедрения зависимостей
-
-    public BotService(IConfiguration configuration, IServiceProvider serviceProvider)
+    public BotService(IConfiguration configuration)
     {
         _botClient = new TelegramBotClient(configuration["TelegramToken"]!);
-        _serviceProvider = serviceProvider;
+        
 
         ReceiverOptions receiverOptions = new()
         {
@@ -37,7 +35,7 @@ public class BotService : IBotService
     public async Task SendMessage(ChatMessage message, CancellationToken token)
     {
         await _botClient.SendTextMessageAsync(
-            chatId: message.ChatId,
+            chatId: message.To,
             text: message.Text,
             cancellationToken: token);
     }
@@ -86,9 +84,7 @@ public class BotService : IBotService
                 _conversations[chatId] = otherChatId;
             }
 
-            await SaveMessage(messageText, chatId, otherChatId);
-
-            await OnMessageReceived(this, new ChatMessage { ChatId = otherChatId, Text = messageText });
+            await OnMessageReceived(this, new ChatMessage { From = chatId, To = otherChatId, Text = messageText });
             return;
         }
 
@@ -99,10 +95,5 @@ public class BotService : IBotService
             cancellationToken: token);
     }
 
-    private async Task SaveMessage(string messageText, long chatId, long otherChatId)
-    {
-        var scope = _serviceProvider.CreateAsyncScope();
-        var repository = scope.ServiceProvider.GetRequiredService<IMessageHistoryRepository>();
-        await repository.Add(chatId, otherChatId, messageText);
-    }
+   
 }

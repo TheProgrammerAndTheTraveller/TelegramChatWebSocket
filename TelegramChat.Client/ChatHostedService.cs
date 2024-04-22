@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.SignalR.Client;
 using System.Text;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using TelegramChat.Domain;
 using TelegramChat.TelegramInteraction;
 using TelegramInteraction;
 
@@ -16,14 +17,16 @@ namespace TelegramChat.Client
         private readonly IBotService _botService;
         private readonly Encryptor _encryptor;
         private readonly Decryptor _decryptor;
+        private readonly IMessageHistoryRepository _repository;
 
 
-        public ChatHostedService(IBotService botService, Encryptor encryptor, Decryptor decryptor)
+        public ChatHostedService(IBotService botService, Encryptor encryptor, Decryptor decryptor, IMessageHistoryRepository messageHistoryRepository)
         {
             _botService = botService;
             _botService.OnMessageReceived += OnMessageReceived;
             _encryptor = encryptor;
             _decryptor = decryptor;
+            _repository = messageHistoryRepository;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -42,10 +45,10 @@ namespace TelegramChat.Client
 
             // Получение сообщения из SignalR.  ReceiveMessage - название метода в SignalR.
             // Должно совпадать с названием при отправке из хаба.
-            connection.On<long, string>("ReceiveMessage", async (chatId, message) =>
+            connection.On<long, byte[]>("ReceiveMessage", async (chatId, message) =>
             {
-                var decrypted = Encoding.UTF8.GetString(_decryptor.Decrypt(Encoding.UTF8.GetBytes(message)));
-                await _botService.SendMessage(new ChatMessage() { ChatId = chatId, Text = decrypted }, cancellationToken);
+                var decrypted = Encoding.UTF8.GetString(_decryptor.Decrypt(message));
+                await _botService.SendMessage(new ChatMessage() { To = chatId, Text = decrypted }, cancellationToken);
             });
 
             connection.On<byte[]>("ReceivePublicKey", (key) => {
@@ -60,9 +63,13 @@ namespace TelegramChat.Client
             // Если удалить эту строчку то сообщение в bot1 не отправится
             // отвечает за получение сообщения
             // ReceiveInHub - название метода в ChatHub.
-            var encrypted = Encoding.UTF8.GetString(_encryptor.Encrypt(message.Text));
-            await connection.SendAsync("ReceiveInHub", message.ChatId, encrypted);
+            var encrypted = _encryptor.Encrypt(message.Text);
+            await connection.SendAsync("ReceiveInHub", message.To, encrypted);
+
+            await _repository.Add(message.From, message.To,encrypted);
+
         }
+
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {

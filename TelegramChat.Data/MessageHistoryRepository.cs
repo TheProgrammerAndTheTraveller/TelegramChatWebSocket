@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,17 +10,19 @@ namespace TelegramChat.Data
 {
     public class MessageHistoryRepository : IMessageHistoryRepository
     {
-        public readonly TelegramChatDbContext _telegramChatDbContext;
+        private readonly IDbContextFactory<TelegramChatDbContext> _contextFactoryFactory;
 
-        public MessageHistoryRepository(TelegramChatDbContext telegramChatDbContext)
+        public MessageHistoryRepository(IDbContextFactory<TelegramChatDbContext> contextFactoryFactory)
         {
-            _telegramChatDbContext = telegramChatDbContext;
+            _contextFactoryFactory = contextFactoryFactory;
         }
-        public async Task Add(long id1, long id2, string text)
+
+        public async Task Add(long id1, long id2, byte[] text)
         {
-            var message = new MessageHistory { Id1 = id1, Id2 = id2, Text = text };
-            await _telegramChatDbContext.MessageHistories.AddAsync(message);
-            await _telegramChatDbContext.SaveChangesAsync();
+            var dbContext = await _contextFactoryFactory.CreateDbContextAsync();
+            var message = new MessageHistory { Id1 = id1, Id2 = id2, Text = text, TimeStamp = DateTime.UtcNow };
+            await dbContext.MessageHistories.AddAsync(message);
+            await dbContext.SaveChangesAsync();
         }
     }
 }

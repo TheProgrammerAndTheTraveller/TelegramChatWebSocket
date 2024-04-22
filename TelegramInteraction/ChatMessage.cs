@@ -8,7 +8,9 @@ namespace TelegramInteraction
 {
     public class ChatMessage
     {
-        public long ChatId { get; set; }
+        public long To { get; set; }
+
+        public long From { get; set; }
 
         public string Text { get; set; }
     }

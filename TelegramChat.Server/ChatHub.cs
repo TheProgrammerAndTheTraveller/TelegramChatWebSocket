@@ -26,15 +26,16 @@ namespace TelegramChat.Server
 
             // Отправка открытого ключа в SignalR
             var currentPublicKey = _decryptor.GetPublicKey();
+            
             await Clients.Caller.SendAsync("ReceivePublicKey", currentPublicKey);
         }
 
-        public async Task ReceiveInHub(long channelId, string message)
+        public async Task ReceiveInHub(long channelId, byte[] message)
         {
-            var decrypted = Encoding.UTF8.GetString(_decryptor.Decrypt(Encoding.UTF8.GetBytes(message)));
+            var decrypted = Encoding.UTF8.GetString(_decryptor.Decrypt(message));
 
             //отправить полученное сообщение на указанный канал
-            await _botService.SendMessage(new ChatMessage { ChatId = channelId, Text = decrypted }, CancellationToken.None);
+            await _botService.SendMessage(new ChatMessage { To = channelId, Text = decrypted }, CancellationToken.None);
             Console.WriteLine($"Received message {message} from chat {channelId}");
         }
         
